@@ -20,6 +20,25 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```
+OPENROUTER_API_KEY=your_openrouter_key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_NAME=ChristianAI - Chat with Jesus
+
+# Optional but recommended (for Premium tokens)
+PREMIUM_JWT_SECRET=super_strong_secret_here
+
+# Optional (to enable rate limiting)
+UPSTASH_REDIS_REST_URL=...
+UPSTASH_REDIS_REST_TOKEN=...
+```
+
+Premium flow works with a signed JWT if `PREMIUM_JWT_SECRET` is set; otherwise it falls back to a base64 token (not recommended for production).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
