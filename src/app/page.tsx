@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -41,7 +42,7 @@ export default function Home() {
               >
                 Stories
               </button>
-              <a href="/pricing" className="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">Pricing</a>
+              <Link href="/pricing" className="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">Pricing</Link>
               <button 
                 onClick={() => window.open('/resources/CSB_Bible.pdf', '_blank')}
                 className="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200 cursor-pointer active:scale-95"
@@ -57,9 +58,9 @@ export default function Home() {
               >
                 Premium
               </a>
-              <a href="/chat" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-full font-medium hover:shadow-lg transition-all duration-300 hover:scale-105">
+              <Link href="/chat" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-full font-medium hover:shadow-lg transition-all duration-300 hover:scale-105">
                 Try Now
-              </a>
+              </Link>
             </div>
             {/* Mobile menu button */}
             <button
@@ -76,9 +77,9 @@ export default function Home() {
           <div className="md:hidden border-t border-gray-100 bg-white/90 backdrop-blur px-6 py-4 space-y-3">
             <button onClick={() => { setMobileOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="block w-full text-left text-gray-700">Features</button>
             <button onClick={() => { setMobileOpen(false); document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="block w-full text-left text-gray-700">Stories</button>
-            <a onClick={() => setMobileOpen(false)} href="/pricing" className="block text-gray-700">Pricing</a>
+              <Link onClick={() => setMobileOpen(false)} href="/pricing" className="block text-gray-700">Pricing</Link>
             <button onClick={() => { setMobileOpen(false); window.open('/resources/CSB_Bible.pdf', '_blank'); }} className="block w-full text-left text-gray-700">Bible</button>
-            <a onClick={() => setMobileOpen(false)} href="/chat" className="block w-full text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 rounded-xl font-semibold">Try Now</a>
+            <Link onClick={() => setMobileOpen(false)} href="/chat" className="block w-full text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 rounded-xl font-semibold">Try Now</Link>
             <a onClick={() => setMobileOpen(false)} href="https://buymeacoffee.com/yaltech" target="_blank" rel="noopener noreferrer" className="block w-full text-center bg-amber-500 text-white px-4 py-3 rounded-xl font-semibold">Premium</a>
           </div>
         )}
@@ -123,12 +124,12 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              <a href="/chat" className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <Link href="/chat" className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                 <span>Start Your Conversation</span>
                 <svg className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                 </svg>
-              </a>
+              </Link>
               <a
                 href="https://buymeacoffee.com/yaltech"
                 target="_blank"

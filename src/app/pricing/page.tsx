@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 
 export default function PricingPage() {
   return (
@@ -6,15 +7,15 @@ export default function PricingPage() {
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
         <nav className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <a href="/" className="flex items-center space-x-3">
+            <Link href="/" className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
                 <span className="text-white text-sm font-bold">✝</span>
               </div>
               <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">ChristianAI</span>
-            </a>
+            </Link>
             <div className="flex items-center gap-4">
-              <a href="/chat" className="text-gray-600 hover:text-gray-900 font-medium">Try</a>
-              <a href="/pricing" className="text-gray-900 font-semibold">Pricing</a>
+              <Link href="/chat" className="text-gray-600 hover:text-gray-900 font-medium">Try</Link>
+              <Link href="/pricing" className="text-gray-900 font-semibold">Pricing</Link>
               <a
                 href="https://buymeacoffee.com/yaltech"
                 target="_blank"
@@ -49,7 +50,7 @@ export default function PricingPage() {
               <li>• Warm, Scripture-based guidance</li>
               <li>• Always-on availability</li>
             </ul>
-            <a href="/chat" className="mt-6 inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50">Start Free</a>
+            <Link href="/chat" className="mt-6 inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50">Start Free</Link>
           </div>
 
           {/* Premium card */}

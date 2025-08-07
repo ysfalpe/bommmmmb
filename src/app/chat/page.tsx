@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 
 interface Message {
   id: string;
@@ -62,17 +63,17 @@ export default function ChatPage() {
     if (savedToken) {
       try {
         // Try to parse as base64 JSON first (legacy)
-        let decoded: any = null;
+        let decoded: { messages?: number } | null = null;
         try {
-          decoded = JSON.parse(atob(savedToken));
-        } catch (_) {
+          decoded = JSON.parse(atob(savedToken)) as { messages?: number };
+        } catch {
           // If not base64 JSON, assume JWT and parse payload
-          const payload = JSON.parse(atob(savedToken.split('.')[1]));
+          const payload = JSON.parse(atob(savedToken.split('.')[1])) as { messages?: number };
           decoded = payload;
         }
         setPremiumToken(savedToken);
         setIsPremium(true);
-        setRemainingMessages(decoded.messages || 0);
+        setRemainingMessages(decoded?.messages || 0);
       } catch {
         localStorage.removeItem('premiumToken');
       }
@@ -114,7 +115,7 @@ export default function ChatPage() {
       } else {
         alert('Invalid premium code. Please check and try again.');
       }
-    } catch (error) {
+    } catch {
       alert('Failed to activate premium code. Please try again.');
     } finally {
       setIsLoading(false);
@@ -209,15 +210,17 @@ export default function ChatPage() {
         
         // Token'dan yeni mesaj sayısını al
         try {
-          let decoded: any = null;
+          let decoded: { messages?: number } | null = null;
           try {
-            decoded = JSON.parse(atob(data.updatedToken));
-          } catch (_) {
-            const payload = JSON.parse(atob(data.updatedToken.split('.')[1]));
+            decoded = JSON.parse(atob(data.updatedToken)) as { messages?: number };
+          } catch {
+            const payload = JSON.parse(atob(data.updatedToken.split('.')[1])) as { messages?: number };
             decoded = payload;
           }
-          setRemainingMessages(decoded.messages);
-          console.log('✅ Monthly renewal complete! New messages:', decoded.messages);
+          if (typeof decoded?.messages === 'number') {
+            setRemainingMessages(decoded.messages);
+            console.log('✅ Monthly renewal complete! New messages:', decoded.messages);
+          }
         } catch {
           console.error('Updated token decode error');
         }
@@ -252,12 +255,12 @@ export default function ChatPage() {
         <nav className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <a href="/" className="flex items-center space-x-3 cursor-pointer group">
+            <Link href="/" className="flex items-center space-x-3 cursor-pointer group">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105">
                 <span className="text-white text-sm font-bold">✝</span>
               </div>
               <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">ChristianAI</span>
-            </a>
+            </Link>
             
             {/* Navigation */}
             <div className="flex items-center space-x-3 md:space-x-6">
@@ -302,15 +305,15 @@ export default function ChatPage() {
                 </div>
               )}
               
-              <a href="/" className="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">
+              <Link href="/" className="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">
                 <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
                 Back to Home
-              </a>
-              <a href="/pricing" className="hidden sm:inline-flex items-center text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">
+              </Link>
+              <Link href="/pricing" className="hidden sm:inline-flex items-center text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">
                 Pricing
-              </a>
+              </Link>
             </div>
           </div>
         </nav>
