@@ -3,6 +3,13 @@ import { jwtVerify, SignJWT } from 'jose';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
+interface PremiumData {
+  premium?: boolean;
+  type?: string;
+  messages?: number;
+  renewDate?: string;
+}
+
 // Optional Upstash rate limit setup (enabled only if env vars are present)
 const redis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
   ? new Redis({ url: process.env.UPSTASH_REDIS_REST_URL, token: process.env.UPSTASH_REDIS_REST_TOKEN })
@@ -23,7 +30,7 @@ function devLog(...args: unknown[]) {
   if (!isProd()) console.log(...args);
 }
 
-function decodeBase64Json<T = any>(token: string): T {
+function decodeBase64Json<T = Record<string, unknown>>(token: string): T {
   const json = Buffer.from(token, 'base64').toString('utf-8');
   return JSON.parse(json) as T;
 }
@@ -64,7 +71,7 @@ export async function POST(request: NextRequest) {
     // Premium token kontrolü
     const authHeader = request.headers.get('Authorization');
     let isPremiumUser = false;
-    let premiumData: any = null;
+    let premiumData: PremiumData | null = null;
     let updatedToken: string | null = null;
 
     if (authHeader?.startsWith('Bearer ')) {
@@ -73,16 +80,16 @@ export async function POST(request: NextRequest) {
       if (premiumJwtSecret) {
         try {
           const { payload } = await jwtVerify(token, premiumJwtSecret, { algorithms: ['HS256'] });
-          premiumData = payload;
-        } catch (err) {
+          premiumData = payload as unknown as PremiumData;
+        } catch {
           devLog('JWT verify failed, falling back to base64 premium token');
         }
       }
       // Fallback: base64 JSON token (legacy) unless forced JWT-only
       if (!premiumData && !forceJwtOnly) {
         try {
-          premiumData = decodeBase64Json(token);
-        } catch (e) {
+          premiumData = decodeBase64Json<PremiumData>(token);
+        } catch {
           devLog('⚠️ Invalid premium token');
         }
       }
@@ -90,7 +97,7 @@ export async function POST(request: NextRequest) {
       isPremiumUser = premiumData?.premium === true;
 
       // Aylık yenileme kontrolü + kota düşümü hazırlığı
-      if (isPremiumUser) {
+      if (isPremiumUser && premiumData) {
         const now = new Date();
         const defaultMessages = typeof premiumData.messages === 'number' ? premiumData.messages : 40;
         let messages = defaultMessages;
@@ -218,8 +225,8 @@ export async function POST(request: NextRequest) {
           await redis.expire(key, ttl);
         }
         freeRemaining = Math.max(0, limit - (await redis.get<number>(key) || newVal));
-      } catch (e) {
-        devLog('Free tier limit check failed (continuing without limit):', e);
+      } catch {
+        devLog('Free tier limit check failed (continuing without limit)');
       }
     }
 
@@ -357,13 +364,13 @@ IMPORTANT: Provide concise pastoral responses (3–5 sentences, at most ~80–12
           // Legacy: base64 JSON token
           updatedToken = Buffer.from(JSON.stringify(premiumData), 'utf-8').toString('base64');
         }
-      } catch (e) {
-        devLog('Token (re)issue failed:', e);
+      } catch {
+        devLog('Token (re)issue failed');
       }
     }
 
     // Response object oluştur
-    const responseData: any = { message: aiMessage };
+    const responseData: { message: string; updatedToken?: string; freeRemaining?: number | null; remainingMessages?: number } = { message: aiMessage };
     if (!isPremiumUser && freeRemaining !== null) {
       responseData.freeRemaining = freeRemaining;
     }

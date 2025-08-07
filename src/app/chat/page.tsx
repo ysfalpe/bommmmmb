@@ -73,7 +73,7 @@ export default function ChatPage() {
         setPremiumToken(savedToken);
         setIsPremium(true);
         setRemainingMessages(decoded.messages || 0);
-      } catch (error) {
+      } catch {
         localStorage.removeItem('premiumToken');
       }
     }
@@ -218,8 +218,8 @@ export default function ChatPage() {
           }
           setRemainingMessages(decoded.messages);
           console.log('✅ Monthly renewal complete! New messages:', decoded.messages);
-        } catch (error) {
-          console.error('Updated token decode error:', error);
+        } catch {
+          console.error('Updated token decode error');
         }
       } else if (isPremium && remainingMessages !== null) {
         // Server now decrements. Trust server; just display what comes via updatedToken next round.
@@ -228,8 +228,8 @@ export default function ChatPage() {
        }
       
       setIsLoading(false);
-    } catch (error) {
-      console.error('❌ Error calling chat API:', error);
+    } catch {
+      console.error('❌ Error calling chat API');
       console.log('🔄 Using fallback message...');
       
       // Fallback message if API fails
