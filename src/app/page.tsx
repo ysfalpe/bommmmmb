@@ -130,6 +130,7 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                 </svg>
               </Link>
+              <div className="text-xs text-white/80 mt-1">By clicking, you agree to our <Link href="/terms" className="underline">Terms</Link> and <Link href="/privacy" className="underline">Privacy</Link>.</div>
               <a
                 href="https://buymeacoffee.com/yaltech"
                 target="_blank"
