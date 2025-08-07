@@ -668,12 +668,12 @@ export default function ChatPage() {
               <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center mr-3">
                 <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09L5.64 12.545.76 8.41l6.09-.527L10 2l3.15 5.883 6.09.527-4.88 4.135 1.518 5.545z"/></svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Daha derin rehberlik ister misin?</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Would you like deeper guidance?</h3>
             </div>
-            <p className="text-gray-700 mb-4">Premium’a geçerek 40 mesaj/ay ve daha uzun, kişisel yanıtlar al. Kurucu indirimi sınırlı süre!</p>
+            <p className="text-gray-700 mb-4">Upgrade to Premium to get 40 messages/month and longer, more personal responses. Founders discount is available for a limited time.</p>
             <div className="flex gap-3">
-              <a href="https://buymeacoffee.com/yaltech" target="_blank" rel="noopener noreferrer" className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-amber-500 text-white rounded-xl font-medium hover:bg-amber-600 transition-colors">Premium’a Geç</a>
-              <button onClick={() => setShowUpsell(false)} className="px-4 py-3 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50">Daha Sonra</button>
+              <a href="https://buymeacoffee.com/yaltech" target="_blank" rel="noopener noreferrer" className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-amber-500 text-white rounded-xl font-medium hover:bg-amber-600 transition-colors">Upgrade to Premium</a>
+              <button onClick={() => setShowUpsell(false)} className="px-4 py-3 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50">Maybe later</button>
             </div>
           </div>
         </div>
