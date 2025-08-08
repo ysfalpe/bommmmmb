@@ -37,6 +37,121 @@ export default function ChatPage() {
   const [freeRemaining, setFreeRemaining] = useState<number | null>(null);
   const [isPremium, setIsPremium] = useState(false);
 
+  // Simple confetti burst (no external packages)
+  function launchConfettiBurst(): void {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+
+    const canvas = document.createElement('canvas');
+    canvas.style.position = 'fixed';
+    canvas.style.inset = '0';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = '60'; // above UI overlays
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      document.body.removeChild(canvas);
+      return;
+    }
+
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const resize = () => {
+      const { innerWidth, innerHeight } = window;
+      canvas.width = Math.floor(innerWidth * dpr);
+      canvas.height = Math.floor(innerHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+
+    const centerX = () => window.innerWidth / 2;
+    const centerY = () => Math.min(window.innerHeight * 0.45, window.innerHeight / 2);
+
+    interface ConfettiParticle {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      size: number;
+      color: string;
+      rotation: number;
+      rotationSpeed: number;
+      alpha: number;
+      drag: number;
+    }
+
+    const colors = [
+      '#f59e0b', // amber-500
+      '#ef4444', // red-500
+      '#3b82f6', // blue-500
+      '#10b981', // emerald-500
+      '#a855f7', // purple-500
+      '#eab308', // yellow-500
+    ];
+
+    const particles: ConfettiParticle[] = [];
+    const count = 120;
+    for (let i = 0; i < count; i += 1) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 4 + Math.random() * 6; // initial explosion speed
+      particles.push({
+        x: centerX(),
+        y: centerY(),
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: 6 + Math.random() * 6,
+        color: colors[i % colors.length],
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.3,
+        alpha: 1,
+        drag: 0.995 - Math.random() * 0.01,
+      });
+    }
+
+    let rafId = 0;
+    const start = performance.now();
+    const durationMs = 1600; // short celebratory burst
+    const gravity = 0.08;
+
+    const draw = () => {
+      const now = performance.now();
+      const elapsed = now - start;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach((p) => {
+        // physics
+        p.vx *= p.drag;
+        p.vy = p.vy * p.drag + gravity;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rotation += p.rotationSpeed;
+        // fade out towards end
+        if (elapsed > durationMs * 0.6) {
+          p.alpha = Math.max(0, 1 - (elapsed - durationMs * 0.6) / (durationMs * 0.6));
+        }
+
+        // draw rectangle shard
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+        ctx.restore();
+      });
+
+      if (elapsed < durationMs) {
+        rafId = requestAnimationFrame(draw);
+      } else {
+        cancelAnimationFrame(rafId);
+        document.body.removeChild(canvas);
+      }
+    };
+
+    rafId = requestAnimationFrame(draw);
+  }
+
   // Auto scroll to bottom when new messages arrive
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -125,6 +240,9 @@ export default function ChatPage() {
         setShowPremiumInput(false);
         setPremiumCode('');
         
+        // Celebration effect (manual activation only)
+        launchConfettiBurst();
+
         // Başarı mesajı
         const successMessage: Message = {
           id: Date.now().toString(),
