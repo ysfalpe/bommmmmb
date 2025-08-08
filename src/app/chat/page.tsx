@@ -78,6 +78,26 @@ export default function ChatPage() {
         localStorage.removeItem('premiumToken');
       }
     }
+    // Silent refresh using saved premium code if present and token missing/expired
+    const savedCode = localStorage.getItem('premiumCode');
+    if (!savedToken && savedCode) {
+      (async () => {
+        try {
+          const res = await fetch('https://workers-playground-lingering-darkness-7b0d.adenalper.workers.dev/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: savedCode, refresh: true })
+          });
+          const data = await res.json();
+          if (data?.success && data?.token) {
+            localStorage.setItem('premiumToken', data.token);
+            setPremiumToken(data.token);
+            setIsPremium(true);
+            setRemainingMessages(data.messages || 40);
+          }
+        } catch {}
+      })();
+    }
   }, []);
 
   // Premium kod aktivasyonu
@@ -98,6 +118,7 @@ export default function ChatPage() {
       
       if (data.success) {
         localStorage.setItem('premiumToken', data.token);
+        localStorage.setItem('premiumCode', premiumCode.trim());
         setPremiumToken(data.token);
         setIsPremium(true);
         setRemainingMessages(data.messages || 40);

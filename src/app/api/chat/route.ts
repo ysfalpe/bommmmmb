@@ -82,6 +82,12 @@ export async function POST(request: NextRequest) {
           const { payload } = await jwtVerify(token, premiumJwtSecret, { algorithms: ['HS256'] });
           premiumData = payload as unknown as PremiumData;
         } catch {
+          if (forceJwtOnly) {
+            return NextResponse.json(
+              { error: 'Premium token expired or invalid. Please renew.' },
+              { status: 402 }
+            );
+          }
           devLog('JWT verify failed, falling back to base64 premium token');
         }
       }
@@ -98,28 +104,14 @@ export async function POST(request: NextRequest) {
 
       // Aylık yenileme kontrolü + kota düşümü hazırlığı
       if (isPremiumUser && premiumData) {
-        const now = new Date();
-        const defaultMessages = typeof premiumData.messages === 'number' ? premiumData.messages : 40;
-        let messages = defaultMessages;
-
-        if (premiumData.type === 'monthly' && premiumData.renewDate) {
-          const renewDate = new Date(premiumData.renewDate);
-          if (now > renewDate) {
-            devLog('🔄 Monthly subscription renewed! Resetting messages...');
-            messages = 40;
-            premiumData.renewDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
-          }
-        }
-
-        // Kota kontrolü (sunucu tarafı)
+        const messages = typeof premiumData.messages === 'number' ? premiumData.messages : 40;
         if (messages <= 0) {
           return NextResponse.json(
             { error: 'Your premium messages are exhausted. Please renew or upgrade.' },
             { status: 402 }
           );
         }
-
-        // Bu istekte bir mesajı tüketeceğiz
+        // Consume one message for this request (no auto monthly reset here)
         premiumData.messages = messages - 1;
       }
 
