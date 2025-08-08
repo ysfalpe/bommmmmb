@@ -201,7 +201,7 @@ export default function ChatPage() {
           const res = await fetch('https://workers-playground-lingering-darkness-7b0d.adenalper.workers.dev/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code: savedCode, refresh: true })
+            body: JSON.stringify({ code: savedCode.trim(), refresh: true })
           });
           const data = await res.json();
           if (data?.success && data?.token) {
@@ -226,7 +226,7 @@ export default function ChatPage() {
       const response = await fetch('https://workers-playground-lingering-darkness-7b0d.adenalper.workers.dev/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: premiumCode })
+        body: JSON.stringify({ code: premiumCode.trim() })
       });
       
       const data = await response.json();
@@ -467,7 +467,7 @@ export default function ChatPage() {
                 <input
                   type="text"
                   value={premiumCode}
-                  onChange={(e) => setPremiumCode(e.target.value.toUpperCase())}
+                  onChange={(e) => setPremiumCode(e.target.value)}
                   placeholder="Enter your premium code (e.g., PREMIUM-2025-ABC123)"
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   onKeyPress={(e) => e.key === 'Enter' && activatePremiumCode()}
