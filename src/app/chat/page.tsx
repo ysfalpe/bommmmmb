@@ -36,6 +36,7 @@ export default function ChatPage() {
   const [remainingMessages, setRemainingMessages] = useState<number | null>(null);
   const [freeRemaining, setFreeRemaining] = useState<number | null>(null);
   const [isPremium, setIsPremium] = useState(false);
+  const [showTopNotice, setShowTopNotice] = useState(true);
 
   // Simple confetti burst (no external packages)
   function launchConfettiBurst(): void {
@@ -175,6 +176,8 @@ export default function ChatPage() {
   // Premium token kontrolü - sayfa yüklendiğinde
   useEffect(() => {
     const savedToken = localStorage.getItem('premiumToken');
+    const hideNotice = localStorage.getItem('hideTopNotice');
+    if (hideNotice === '1') setShowTopNotice(false);
     if (savedToken) {
       try {
         // Try to parse as base64 JSON first (legacy)
@@ -388,11 +391,11 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-[100dvh] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
         <nav className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-14 md:h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-3 cursor-pointer group">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105">
@@ -628,7 +631,7 @@ export default function ChatPage() {
 
         {/* Chat Container */}
         {selectedMood && (
-          <div className="h-[calc(100vh-8rem)] flex flex-col">
+          <div className="h-[calc(100dvh-7rem)] md:h-[calc(100vh-8rem)] flex flex-col">
           
           {/* Chat Header */}
           <div className="bg-white/80 backdrop-blur-md rounded-t-2xl border border-gray-200 p-6">
@@ -658,16 +661,25 @@ export default function ChatPage() {
           </div>
 
           {/* Non-premium top notice */}
-          {!isPremium && (
-            <div className="border-x border-b border-amber-200 bg-amber-50 text-amber-800 px-6 py-3 text-sm">
-              Founders Discount: 40% Off • Premium = deeper, more personal guidance + 40 messages/month.{' '}
-              <a href="https://buymeacoffee.com/yaltech" target="_blank" rel="noopener noreferrer" className="underline font-medium">Get your code</a>
+          {!isPremium && showTopNotice && (
+            <div className="relative border-x border-b border-amber-200 bg-amber-50 text-amber-800 px-4 sm:px-6 py-2.5 text-xs sm:text-sm">
+              <span>
+                Founders Discount: 40% Off • Premium = deeper, more personal guidance + 40 messages/month.{' '}
+                <a href="https://buymeacoffee.com/yaltech" target="_blank" rel="noopener noreferrer" className="underline font-medium">Get your code</a>
+              </span>
+              <button
+                aria-label="Close"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-amber-100"
+                onClick={() => { setShowTopNotice(false); localStorage.setItem('hideTopNotice','1'); }}
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
             </div>
           )}
 
           {/* Messages Area */}
           <div className="flex-1 bg-gradient-to-b from-white/50 to-blue-50/30 backdrop-blur-sm border-x border-gray-200 overflow-y-auto">
-            <div className="p-6 space-y-6 max-w-4xl mx-auto">
+            <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
               
               {messages.map((message) => (
                 <div key={message.id} className={`flex items-start gap-4 ${message.sender === 'user' ? 'flex-row-reverse' : ''}`}>
@@ -685,12 +697,12 @@ export default function ChatPage() {
                   
                   {/* Message Bubble */}
                   <div className={`group max-w-2xl ${message.sender === 'user' ? 'text-right' : ''}`}>
-                    <div className={`inline-block p-4 rounded-2xl shadow-sm border transition-all duration-300 group-hover:shadow-md ${
+                    <div className={`inline-block p-3 sm:p-4 rounded-2xl shadow-sm border transition-all duration-300 group-hover:shadow-md ${
                       message.sender === 'ai' 
                         ? 'bg-white/80 backdrop-blur-md text-gray-800 border-gray-200 rounded-tl-md' 
                         : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-blue-600 rounded-tr-md'
                     }`}>
-                      <p className="leading-relaxed whitespace-pre-wrap">{message.text}</p>
+                      <p className="leading-relaxed whitespace-pre-wrap text-[15px] sm:text-base">{message.text}</p>
                       <p className={`text-xs mt-2 ${
                         message.sender === 'ai' ? 'text-gray-400' : 'text-blue-100'
                       }`}>
@@ -727,7 +739,7 @@ export default function ChatPage() {
           </div>
 
           {/* Message Input */}
-          <div className="bg-white/80 backdrop-blur-md rounded-b-2xl border border-gray-200 p-6">
+          <div className="bg-white/80 backdrop-blur-md rounded-b-2xl border border-gray-200 p-4 sm:p-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
             <form onSubmit={handleSendMessage} className="relative" action="#">
               <div className="flex items-end space-x-3">
                 <div className="flex-1 relative">
@@ -736,7 +748,7 @@ export default function ChatPage() {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder="Share your thoughts, ask questions, or request prayers..."
-                    className="w-full bg-white/90 backdrop-blur-sm border border-gray-300 rounded-2xl pl-4 pr-12 py-4 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-400 transition-all duration-200 shadow-sm font-medium"
+                    className="w-full bg-white/90 backdrop-blur-sm border border-gray-300 rounded-2xl pl-4 pr-12 py-3 sm:py-4 text-[16px] text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-400 transition-all duration-200 shadow-sm font-medium"
                     disabled={isLoading}
                   />
                   
