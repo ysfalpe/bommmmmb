@@ -422,26 +422,26 @@ export default function ChatPage() {
                   )}
                 </div>
               ) : (
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center gap-2 sm:space-x-3 flex-nowrap">
                   <a
                     href="https://buymeacoffee.com/yaltech"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-4 py-2 bg-amber-500 text-white rounded-full font-medium hover:bg-amber-600 transition-all duration-300 hover:shadow-lg hover:scale-105"
+                    className="inline-flex items-center whitespace-nowrap px-3 py-1.5 text-xs sm:text-sm sm:px-4 sm:py-2 bg-amber-500 text-white rounded-full font-medium hover:bg-amber-600 transition-all duration-300 hover:shadow-lg"
                     title="Founders discount • 40 messages/month"
                   >
-                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3.5 h-3.5 mr-1.5 sm:w-4 sm:h-4 sm:mr-2" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                     </svg>
                     Premium
                   </a>
                   <button
                     onClick={() => setShowPremiumInput(!showPremiumInput)}
-                    className="inline-flex items-center px-4 py-2 rounded-full font-medium border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:shadow-sm active:scale-[0.98] cursor-pointer transition-all"
+                    className="inline-flex items-center whitespace-nowrap px-3 py-1.5 text-xs sm:text-sm sm:px-4 sm:py-2 rounded-full font-medium border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:shadow-sm"
                     title="I have a code"
                     aria-expanded={showPremiumInput}
                   >
-                    <svg className="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a4 4 0 10-4 4h.5a2.5 2.5 0 012.5 2.5V15l2 2 2-2-2-2v-.5A4.5 4.5 0 0011.5 8H11"/></svg>
+                    <svg className="w-3.5 h-3.5 mr-1.5 sm:w-4 sm:h-4 sm:mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a4 4 0 10-4 4h.5a2.5 2.5 0 012.5 2.5V15l2 2 2-2-2-2v-.5A4.5 4.5 0 0011.5 8H11"/></svg>
                     I have a code
                   </button>
                 </div>
