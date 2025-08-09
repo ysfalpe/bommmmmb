@@ -8,6 +8,7 @@ interface Message {
   text: string;
   sender: 'user' | 'ai';
   timestamp: Date;
+  gated?: boolean;
 }
 
 type MoodType = 'peaceful' | 'troubled' | 'curious' | 'grateful' | 'seeking' | null;
@@ -36,6 +37,8 @@ export default function ChatPage() {
   const [remainingMessages, setRemainingMessages] = useState<number | null>(null);
   const [freeRemaining, setFreeRemaining] = useState<number | null>(null);
   const [isPremium, setIsPremium] = useState(false);
+  const [hasGatedOnce, setHasGatedOnce] = useState(false);
+  const [showPremiumWarn, setShowPremiumWarn] = useState(false);
   const [showTopNotice, setShowTopNotice] = useState(true);
 
   // Simple confetti burst (no external packages)
@@ -161,6 +164,13 @@ export default function ChatPage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    if (isPremium) {
+      setHasGatedOnce(false);
+      setShowPremiumWarn(false);
+    }
+  }, [isPremium]);
 
   // Soft upsell: show after 3rd user message, once per session
   useEffect(() => {
@@ -291,6 +301,26 @@ export default function ChatPage() {
     }
 
     console.log('✅ Creating user message...');
+
+    // Gate free users after limit: show blurred AI message once, then red warning
+    if (!isPremium && freeRemaining !== null && freeRemaining <= 0) {
+      if (!hasGatedOnce) {
+        const gatedAi = {
+          id: (Date.now() + 1).toString(),
+          text: "Thank you for sharing. I’m here with you. To continue and see full responses, please upgrade to Premium.",
+          sender: 'ai' as const,
+          timestamp: new Date(),
+          gated: true,
+        };
+        setMessages((prev) => [...prev, gatedAi]);
+        setHasGatedOnce(true);
+        setIsLoading(false);
+        return;
+      }
+      setShowPremiumWarn(true);
+      setIsLoading(false);
+      return;
+    }
 
     // Add user message
     const userMessage: Message = {
@@ -696,18 +726,27 @@ export default function ChatPage() {
                   </div>
                   
                   {/* Message Bubble */}
-                  <div className={`group max-w-2xl ${message.sender === 'user' ? 'text-right' : ''}`}>
+                  <div className={`group relative max-w-2xl ${message.sender === 'user' ? 'text-right' : ''}`}>
                     <div className={`inline-block p-3 sm:p-4 rounded-2xl shadow-sm border transition-all duration-300 group-hover:shadow-md ${
                       message.sender === 'ai' 
                         ? 'bg-white/80 backdrop-blur-md text-gray-800 border-gray-200 rounded-tl-md' 
                         : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-blue-600 rounded-tr-md'
-                    }`}>
-                      <p className="leading-relaxed whitespace-pre-wrap text-[15px] sm:text-base">{message.text}</p>
-                      <p className={`text-xs mt-2 ${
-                        message.sender === 'ai' ? 'text-gray-400' : 'text-blue-100'
-                      }`}>
-                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </p>
+                    } ${message.gated ? 'overflow-hidden' : ''}`}>
+                      <div className={message.gated ? 'filter blur-sm select-none' : ''}>
+                        <p className="leading-relaxed whitespace-pre-wrap text-[15px] sm:text-base">{message.text}</p>
+                        <p className={`text-xs mt-2 ${
+                          message.sender === 'ai' ? 'text-gray-400' : 'text-blue-100'
+                        }`}>
+                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                      {message.gated && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="px-4 py-2 rounded-xl bg-white/80 text-gray-800 text-sm font-medium shadow">
+                            Upgrade to Premium to view and continue your conversation
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                   
@@ -740,6 +779,11 @@ export default function ChatPage() {
 
           {/* Message Input */}
           <div className="bg-white/80 backdrop-blur-md rounded-b-2xl border border-gray-200 p-4 sm:p-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            {showPremiumWarn && !isPremium && (
+              <div className="mb-3 px-3 py-2 rounded-lg border border-red-300 bg-red-50 text-red-700 text-sm">
+                You’ve reached today’s free limit. Please upgrade to Premium to continue.
+              </div>
+            )}
             <form onSubmit={handleSendMessage} className="relative" action="#">
               <div className="flex items-end space-x-3">
                 <div className="flex-1 relative">
