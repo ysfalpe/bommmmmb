@@ -19,6 +19,15 @@ const ratelimit = redis
   ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(20, '1 m') })
   : null;
 
+console.log(
+  'Redis Değişkenleri Kontrolü:',
+  {
+    url_exists: !!process.env.UPSTASH_REDIS_REST_URL,
+    token_exists: !!process.env.UPSTASH_REDIS_REST_TOKEN,
+    redis_instance_created: !!redis
+  }
+);
+
 const premiumJwtSecret = process.env.PREMIUM_JWT_SECRET ? new TextEncoder().encode(process.env.PREMIUM_JWT_SECRET) : null;
 const forceJwtOnly = process.env.FORCE_JWT_ONLY === 'true';
 
@@ -56,6 +65,7 @@ export async function POST(request: NextRequest) {
     // Basic rate limit (optional if Upstash configured)
     try {
       if (ratelimit) {
+        console.log('Rate limit KONTROLÜ BAŞLADI - IP:', ip);
         const result = await ratelimit.limit(`chat:${ip}`);
         if (!result.success) {
           return NextResponse.json(
@@ -196,6 +206,7 @@ export async function POST(request: NextRequest) {
     // Free tier limit: 5 messages/day per IP (enforced only if Redis configured)
     if (!isPremiumUser && redis) {
       try {
+        console.log('ÜCRETSİZ KULLANICI LİMİT KONTROLÜ BAŞLADI');
         const now = new Date();
         const y = now.getUTCFullYear();
         const m = String(now.getUTCMonth() + 1).padStart(2, '0');
