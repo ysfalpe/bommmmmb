@@ -46,7 +46,7 @@ export default function PricingPage() {
             <div className="text-4xl font-bold text-gray-900 mb-1">$0</div>
             <div className="text-gray-500 mb-6">forever</div>
             <ul className="space-y-3 text-gray-700">
-              <li>• 5 messages per day</li>
+              <li>• 5 messages per month</li>
               <li>• Warm, Scripture-based guidance</li>
               <li>• Always-on availability</li>
             </ul>
@@ -97,7 +97,7 @@ export default function PricingPage() {
           <div className="grid md:grid-cols-3 gap-4 text-gray-700">
             <div>
               <div className="font-semibold mb-2">Messages</div>
-              <div>Free: 5/day</div>
+              <div>Free: 5/month</div>
               <div>Premium: 40/month</div>
             </div>
             <div>
