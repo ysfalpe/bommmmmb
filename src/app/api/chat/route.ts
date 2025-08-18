@@ -272,7 +272,7 @@ IMPORTANT: Provide concise pastoral responses (3–5 sentences, at most ~80–12
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        "model": "google/gemma-3-12b-it",
+        "model": "meta-llama/llama-3.2-1b-instruct",
         "messages": [
           {
             "role": "system",
@@ -320,7 +320,7 @@ IMPORTANT: Provide concise pastoral responses (3–5 sentences, at most ~80–12
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          model: "google/gemma-3-12b-it",
+          model: "meta-llama/llama-3.2-1b-instruct",
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: message },
