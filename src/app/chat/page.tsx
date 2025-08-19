@@ -781,7 +781,7 @@ export default function ChatPage() {
           <div className="bg-white/80 backdrop-blur-md rounded-b-2xl border border-gray-200 p-4 sm:p-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
             {showPremiumWarn && !isPremium && (
               <div className="mb-3 px-3 py-2 rounded-lg border border-red-300 bg-red-50 text-red-700 text-sm">
-                You’ve reached today’s free limit. Please upgrade to Premium to continue.
+                You’ve reached this month’s free limit. Please upgrade to Premium to continue.
               </div>
             )}
             <form onSubmit={handleSendMessage} className="relative" action="#">
@@ -829,7 +829,7 @@ export default function ChatPage() {
               <div className="flex flex-wrap items-center justify-center mt-4 gap-4 text-xs text-gray-600">
                 {!isPremium && freeRemaining !== null && (
                   <div className="inline-flex items-center px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-full text-blue-700">
-                    Today: {freeRemaining} free messages left
+                    This Month: {freeRemaining} free messages left
                   </div>
                 )}
                 <div className="flex items-center">
