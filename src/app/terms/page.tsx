@@ -1,8 +1,43 @@
+'use client';
 import Link from 'next/link';
+import Script from 'next/script';
+import { useState, useEffect } from 'react';
 
 export default function TermsPage() {
+  const [isPremium, setIsPremium] = useState(false);
+
+  // Check if user is premium
+  useEffect(() => {
+    const savedToken = localStorage.getItem('premiumToken');
+    if (savedToken) {
+      try {
+        // Try to parse as base64 JSON first (legacy)
+        let decoded: { premium?: boolean } | null = null;
+        try {
+          decoded = JSON.parse(atob(savedToken)) as { premium?: boolean };
+        } catch {
+          // If not base64 JSON, assume JWT and parse payload
+          const payload = JSON.parse(atob(savedToken.split('.')[1])) as { premium?: boolean };
+          decoded = payload;
+        }
+        setIsPremium(decoded?.premium === true);
+      } catch {
+        // Invalid token, remove it
+        localStorage.removeItem('premiumToken');
+      }
+    }
+  }, []);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {/* AdSense Script - Only for non-premium users */}
+      {!isPremium && (
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8992984801647508"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      )}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
         <nav className="max-w-4xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">ChristianAI</Link>

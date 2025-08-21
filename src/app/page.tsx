@@ -1,11 +1,45 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Script from 'next/script';
 
 export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
+
+  // Check if user is premium
+  useEffect(() => {
+    const savedToken = localStorage.getItem('premiumToken');
+    if (savedToken) {
+      try {
+        // Try to parse as base64 JSON first (legacy)
+        let decoded: { premium?: boolean } | null = null;
+        try {
+          decoded = JSON.parse(atob(savedToken)) as { premium?: boolean };
+        } catch {
+          // If not base64 JSON, assume JWT and parse payload
+          const payload = JSON.parse(atob(savedToken.split('.')[1])) as { premium?: boolean };
+          decoded = payload;
+        }
+        setIsPremium(decoded?.premium === true);
+      } catch {
+        // Invalid token, remove it
+        localStorage.removeItem('premiumToken');
+      }
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
+      {/* AdSense Script - Only for non-premium users */}
+      {!isPremium && (
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8992984801647508"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      )}
       {/* Navigation Header */}
       <header className="absolute top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <nav className="max-w-6xl mx-auto px-6 lg:px-8">
