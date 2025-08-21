@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Script from 'next/script';
 
 interface Message {
   id: string;
@@ -422,6 +423,15 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-[100dvh] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {/* AdSense Script - Only for non-premium users */}
+      {!isPremium && (
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8992984301647508"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      )}
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
         <nav className="max-w-6xl mx-auto px-6 lg:px-8">

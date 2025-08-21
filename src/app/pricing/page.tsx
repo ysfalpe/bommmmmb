@@ -66,6 +66,7 @@ export default function PricingPage() {
               <li>• 40 messages per month</li>
               <li>• Deeper, longer, more personal guidance</li>
               <li>• Priority processing</li>
+              <li>• No ads - clean experience</li>
               <li>• Instant activation after code entry</li>
             </ul>
             <a
@@ -94,7 +95,7 @@ export default function PricingPage() {
         {/* Free vs Premium quick table */}
         <div className="mt-6 bg-white rounded-2xl border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Free vs Premium</h3>
-          <div className="grid md:grid-cols-3 gap-4 text-gray-700">
+          <div className="grid md:grid-cols-4 gap-4 text-gray-700">
             <div>
               <div className="font-semibold mb-2">Messages</div>
               <div>Free: 5/month</div>
@@ -104,6 +105,11 @@ export default function PricingPage() {
               <div className="font-semibold mb-2">Guidance depth</div>
               <div>Free: concise answers</div>
               <div>Premium: deeper, longer, personal</div>
+            </div>
+            <div>
+              <div className="font-semibold mb-2">Ads</div>
+              <div>Free: yes</div>
+              <div>Premium: no ads</div>
             </div>
             <div>
               <div className="font-semibold mb-2">Priority</div>
