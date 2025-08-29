@@ -1,128 +1,80 @@
-'use client';
 import Link from 'next/link';
-import Script from 'next/script';
-import { useState, useEffect } from 'react';
 
 export default function TermsPage() {
-  const [isPremium, setIsPremium] = useState(false);
-
-  // Check if user is premium
-  useEffect(() => {
-    const savedToken = localStorage.getItem('premiumToken');
-    if (savedToken) {
-      try {
-        // Try to parse as base64 JSON first (legacy)
-        let decoded: { premium?: boolean } | null = null;
-        try {
-          decoded = JSON.parse(atob(savedToken)) as { premium?: boolean };
-        } catch {
-          // If not base64 JSON, assume JWT and parse payload
-          const payload = JSON.parse(atob(savedToken.split('.')[1])) as { premium?: boolean };
-          decoded = payload;
-        }
-        setIsPremium(decoded?.premium === true);
-      } catch {
-        // Invalid token, remove it
-        localStorage.removeItem('premiumToken');
-      }
-    }
-  }, []);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* AdSense Script - Only for non-premium users */}
-      {!isPremium && (
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8992984801647508"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-      )}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
-        <nav className="max-w-4xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link href="/" className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">ChristianAI</Link>
-          <Link href="/pricing" className="text-gray-600 hover:text-gray-900">Pricing</Link>
+        <nav className="max-w-6xl mx-auto px-6 lg:px-8">
+          <div className="flex justify-between items-center h-14 md:h-16">
+            {/* Logo */}
+            <Link href="/" className="flex items-center space-x-3 cursor-pointer group">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                <span className="text-white font-bold text-lg">✞</span>
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                ChristianAI
+              </span>
+            </Link>
+
+            {/* Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              <Link href="/chat" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+                Chat
+              </Link>
+              <Link href="/pricing" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+                Pricing
+              </Link>
+            </div>
+          </div>
         </nav>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 lg:px-8 py-10">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Terms of Use</h1>
-        <p className="text-sm text-gray-500 mb-8">Last updated: {new Date().toISOString().slice(0, 10)}</p>
+      <main className="max-w-4xl mx-auto px-6 lg:px-8 pt-24 pb-16">
+        <div className="bg-white/70 backdrop-blur-md rounded-3xl border border-gray-200 p-8 md:p-12 shadow-xl">
+          <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">Terms of Service</h1>
+          
+          <div className="prose prose-lg max-w-none">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Acceptance of Terms</h2>
+            <p className="text-gray-600 mb-6">
+              By accessing and using ChristianAI, you accept and agree to be bound by the terms 
+              and provision of this agreement.
+            </p>
 
-        <div className="prose prose-slate max-w-none">
-          <p>
-            By accessing or using ChristianAI, you agree to these Terms. If you do not agree, do not use the service.
-          </p>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Use License</h2>
+            <p className="text-gray-600 mb-6">
+              Permission is granted to temporarily use ChristianAI for personal, non-commercial 
+              transitory viewing only. This is the grant of a license, not a transfer of title.
+            </p>
 
-          <h2>1. Service</h2>
-          <p>
-            ChristianAI provides AI-generated pastoral conversation and spiritual guidance for informational and devotional purposes only.
-            It is not a substitute for professional counseling, therapy, medical, legal, or financial advice.
-          </p>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Service Guidelines</h2>
+            <p className="text-gray-600 mb-6">
+              Our AI chat service is designed to provide spiritual guidance and support. 
+              Please use the service respectfully and in accordance with Christian values.
+            </p>
 
-          <h2>2. Acceptable use</h2>
-          <ul>
-            <li>No unlawful, abusive, hateful, harassing, or spam content.</li>
-            <li>No attempts to attack, disrupt, or reverse engineer the service.</li>
-            <li>Respect usage limits and rate limits. Automated scraping or excessive requests are prohibited.</li>
-          </ul>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Limitations</h2>
+            <p className="text-gray-600 mb-6">
+              In no event shall ChristianAI or its suppliers be liable for any damages 
+              arising out of the use or inability to use the service.
+            </p>
 
-          <h2>3. Accounts and Premium</h2>
-          <ul>
-            <li>Premium provides additional message quota and experience. Quotas may change for reliability or abuse prevention.</li>
-            <li>Codes/tokens are personal and must not be shared or resold.</li>
-            <li>We may suspend access for suspected abuse, fraud, or policy violations.</li>
-          </ul>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Revisions</h2>
+            <p className="text-gray-600 mb-6">
+              ChristianAI may revise these terms of service at any time without notice. 
+              By using this service you are agreeing to be bound by the current version of these terms.
+            </p>
 
-          <h2>4. Payments and refunds</h2>
-          <ul>
-            <li>Payments are processed by third‑party providers (e.g., Buy Me a Coffee). We do not store card details.</li>
-            <li>Premium activation typically occurs within 24 hours after purchase via a code delivered to you.</li>
-            <li>Refunds are considered only for non‑delivery or technical inability to access the service after reasonable troubleshooting.</li>
-          </ul>
-
-          <h2>5. Intellectual property</h2>
-          <p>
-            The site, branding, UI, and content are owned by us or our licensors. You receive a limited, non‑exclusive
-            license to use the service for personal, non‑commercial purposes.
-          </p>
-
-          <h2>6. Disclaimers</h2>
-          <p>
-            THE SERVICE IS PROVIDED “AS IS” WITHOUT WARRANTIES OF ANY KIND. AI OUTPUT MAY BE INACCURATE OR INCOMPLETE.
-            YOU USE THE SERVICE AT YOUR OWN RISK.
-          </p>
-
-          <h2>7. Limitation of liability</h2>
-          <p>
-            TO THE MAXIMUM EXTENT PERMITTED BY LAW, WE SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
-            CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, DATA, OR GOODWILL.
-          </p>
-
-          <h2>8. Changes</h2>
-          <p>
-            We may update these Terms or the service at any time. If material changes occur, we will post a notice.
-            Continued use after changes means acceptance.
-          </p>
-
-          <h2>9. Governing law</h2>
-          <p>
-            These Terms are governed by the laws applicable in your country/region, excluding conflict of law rules.
-          </p>
-
-          <h2>10. Contact</h2>
-          <p>
-            For questions about these Terms, contact us via the <Link href="/contact" className="text-blue-600">contact</Link> page.
-          </p>
-
-          <p className="text-sm text-gray-500 mt-6">
-            By using ChristianAI, you also agree to our <Link href="/privacy" className="text-blue-600">Privacy Policy</Link>.
-          </p>
+            <div className="text-center mt-12">
+              <Link 
+                href="/" 
+                className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105"
+              >
+                Back to Home
+              </Link>
+            </div>
+          </div>
         </div>
       </main>
     </div>
   );
 }
-
-
-
