@@ -58,9 +58,9 @@ export default function PricingPage() {
             <div className="absolute -top-3 right-4 inline-flex items-center px-3 py-1 bg-amber-500 text-white text-xs rounded-full shadow">Most Popular</div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">Premium</h2>
-              <span className="text-sm text-amber-600">Founders -40%</span>
+              <span className="text-sm text-amber-600">Special Offer</span>
             </div>
-            <div className="text-4xl font-bold text-gray-900 mb-1">$15</div>
+            <div className="text-4xl font-bold text-gray-900 mb-1">$5</div>
             <div className="text-gray-500 mb-6">per month</div>
             <ul className="space-y-3 text-gray-700">
               <li>• 40 messages per month</li>
