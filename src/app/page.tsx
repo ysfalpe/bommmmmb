@@ -1,9 +1,39 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(1);
+
+  // First-time visitor detection
+  useEffect(() => {
+    const hasVisited = localStorage.getItem('hasVisitedBefore');
+    if (!hasVisited) {
+      // Show onboarding after 1 second (let page load first)
+      setTimeout(() => setShowOnboarding(true), 1000);
+      localStorage.setItem('hasVisitedBefore', 'true');
+    }
+  }, []);
+
+  const closeOnboarding = () => {
+    setShowOnboarding(false);
+    setOnboardingStep(1);
+  };
+
+  const nextStep = () => {
+    if (onboardingStep < 4) {
+      setOnboardingStep(onboardingStep + 1);
+    } else {
+      closeOnboarding();
+    }
+  };
+
+  const skipOnboarding = () => {
+    closeOnboarding();
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation Header */}
@@ -42,6 +72,7 @@ export default function Home() {
               >
                 Stories
               </button>
+              <Link href="/blog" className="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">Blog</Link>
               <Link href="/pricing" className="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">Pricing</Link>
               <button 
                 onClick={() => window.open('/resources/CSB_Bible.pdf', '_blank')}
@@ -77,7 +108,8 @@ export default function Home() {
           <div className="md:hidden border-t border-gray-100 bg-white/90 backdrop-blur px-6 py-4 space-y-3">
             <button onClick={() => { setMobileOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="block w-full text-left text-gray-700">Features</button>
             <button onClick={() => { setMobileOpen(false); document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="block w-full text-left text-gray-700">Stories</button>
-              <Link onClick={() => setMobileOpen(false)} href="/pricing" className="block text-gray-700">Pricing</Link>
+            <Link onClick={() => setMobileOpen(false)} href="/blog" className="block text-gray-700">Blog</Link>
+            <Link onClick={() => setMobileOpen(false)} href="/pricing" className="block text-gray-700">Pricing</Link>
             <button onClick={() => { setMobileOpen(false); window.open('/resources/CSB_Bible.pdf', '_blank'); }} className="block w-full text-left text-gray-700">Bible</button>
             <Link onClick={() => setMobileOpen(false)} href="/chat" className="block w-full text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 rounded-xl font-semibold">Try Now</Link>
             <a onClick={() => setMobileOpen(false)} href="https://buymeacoffee.com/yaltech" target="_blank" rel="noopener noreferrer" className="block w-full text-center bg-amber-500 text-white px-4 py-3 rounded-xl font-semibold">Premium</a>
@@ -377,6 +409,228 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* 🎯 ONBOARDING MODAL - First-time visitors only */}
+      {showOnboarding && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] px-4 animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full mx-auto overflow-hidden animate-slideUp">
+            
+            {/* Progress Bar */}
+            <div className="h-1 bg-gray-100">
+              <div 
+                className="h-full bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-500"
+                style={{ width: `${(onboardingStep / 4) * 100}%` }}
+              />
+            </div>
+
+            {/* Content */}
+            <div className="p-8 md:p-10">
+              
+              {/* Step 1: Warm Welcome + Social Proof */}
+              {onboardingStep === 1 && (
+                <div className="text-center space-y-6 animate-fadeIn">
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl flex items-center justify-center mx-auto shadow-xl">
+                    <span className="text-4xl text-white">✝</span>
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-3">Welcome, dear friend! 🕊️</h2>
+                    <p className="text-lg text-gray-600 leading-relaxed">
+                      Join <span className="font-bold text-blue-600">3,000+ believers</span> who have found peace, guidance, and deeper faith through our AI pastor.
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2 text-yellow-500 text-2xl">
+                    <span>⭐</span>
+                    <span>⭐</span>
+                    <span>⭐</span>
+                    <span>⭐</span>
+                    <span>⭐</span>
+                  </div>
+                  <p className="text-sm text-gray-500 italic">"This changed my spiritual journey forever" - Sarah M.</p>
+                </div>
+              )}
+
+              {/* Step 2: Value Demonstration */}
+              {onboardingStep === 2 && (
+                <div className="space-y-6 animate-fadeIn">
+                  <div className="text-center">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-3">What You'll Get 🎁</h2>
+                    <p className="text-gray-600">Your AI pastor provides:</p>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                      <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900 mb-1">Scripture-Based Wisdom</h3>
+                        <p className="text-sm text-gray-600">Every answer rooted in Biblical truth</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start space-x-4 p-4 bg-green-50 rounded-xl border border-green-100">
+                      <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900 mb-1">24/7 Availability</h3>
+                        <p className="text-sm text-gray-600">Spiritual guidance whenever you need it</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start space-x-4 p-4 bg-purple-50 rounded-xl border border-purple-100">
+                      <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900 mb-1">Private & Secure</h3>
+                        <p className="text-sm text-gray-600">Your conversations are completely confidential</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Quick Win - Commitment */}
+              {onboardingStep === 3 && (
+                <div className="text-center space-y-6 animate-fadeIn">
+                  <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl flex items-center justify-center mx-auto shadow-xl">
+                    <span className="text-4xl">🎁</span>
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-3">Start Free Today! 🎉</h2>
+                    <p className="text-lg text-gray-600 leading-relaxed mb-4">
+                      Get <span className="font-bold text-green-600">5 free messages</span> this month. No credit card required.
+                    </p>
+                    <div className="inline-flex items-center px-4 py-2 bg-green-50 rounded-full border border-green-200">
+                      <svg className="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+                      <span className="text-sm font-medium text-green-700">No signup • Instant access</span>
+                    </div>
+                  </div>
+                  <div className="space-y-3 text-left bg-gray-50 rounded-xl p-5">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
+                      </div>
+                      <span className="text-gray-700">Ask spiritual questions</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
+                      </div>
+                      <span className="text-gray-700">Get prayer support</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
+                      </div>
+                      <span className="text-gray-700">Receive Biblical wisdom</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Premium Soft Pitch - Scarcity */}
+              {onboardingStep === 4 && (
+                <div className="text-center space-y-6 animate-fadeIn">
+                  <div className="relative w-20 h-20 mx-auto">
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl shadow-xl animate-pulse"></div>
+                    <div className="relative w-20 h-20 bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl flex items-center justify-center shadow-xl">
+                      <span className="text-4xl">👑</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="inline-flex items-center px-3 py-1.5 bg-red-100 text-red-700 rounded-full text-sm font-medium mb-3 animate-bounce">
+                      ⏰ Limited Time: Founders Discount 40% OFF
+                    </div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-3">Want Deeper Guidance? 🌟</h2>
+                    <p className="text-lg text-gray-600 leading-relaxed">
+                      Upgrade to <span className="font-bold text-amber-600">Premium</span> for just <span className="font-bold line-through text-gray-400">$8</span> <span className="font-bold text-green-600 text-2xl">$5/month</span>
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border-2 border-amber-200">
+                    <div className="grid grid-cols-2 gap-4 text-left">
+                      <div>
+                        <div className="text-2xl font-bold text-gray-900">40</div>
+                        <div className="text-sm text-gray-600">messages/month</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-gray-900">∞</div>
+                        <div className="text-sm text-gray-600">depth & quality</div>
+                      </div>
+                      <div className="col-span-2 pt-2 border-t border-amber-200">
+                        <div className="flex items-center space-x-2 text-sm text-gray-700">
+                          <svg className="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                          <span className="font-medium">No ads, longer responses, priority support</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    💡 You can start free and upgrade anytime. The discount won't last forever!
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+                <button
+                  onClick={skipOnboarding}
+                  className="text-gray-400 hover:text-gray-600 font-medium text-sm transition-colors"
+                >
+                  Skip for now
+                </button>
+                
+                <div className="flex items-center space-x-3">
+                  {/* Step indicator */}
+                  <div className="flex space-x-1.5">
+                    {[1, 2, 3, 4].map((step) => (
+                      <div
+                        key={step}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          step === onboardingStep
+                            ? 'bg-blue-600 w-6'
+                            : step < onboardingStep
+                            ? 'bg-green-500'
+                            : 'bg-gray-200'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Next/Finish button */}
+                  {onboardingStep < 4 ? (
+                    <button
+                      onClick={nextStep}
+                      className="group inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
+                    >
+                      Next
+                      <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
+                      </svg>
+                    </button>
+                  ) : (
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Link
+                        href="/chat"
+                        onClick={closeOnboarding}
+                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 text-center"
+                      >
+                        Start Free 🚀
+                      </Link>
+                      <a
+                        href="https://buymeacoffee.com/yaltech"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-6 py-3 bg-amber-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 text-center"
+                      >
+                        Get Premium 👑
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
